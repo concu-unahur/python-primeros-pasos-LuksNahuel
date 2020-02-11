@@ -13,7 +13,8 @@ def sumarUno():
     global lock
     try:
         # el thread toma el control y hace la operación
-        lock.acquire()
+        #time.sleep(0.1)
+        #lock.acquire()
         valor += 1
     finally:
         # finalmente lo libera para el segundo thread
@@ -22,17 +23,21 @@ def sumarUno():
 def multiplicarPorDos():
     global valor
     global lock
+    lock.acquire()
     try:
-        lock.acquire()
         valor *= 2
     finally:
         lock.release()
-        
-t1 = threading.Thread(target=sumarUno)
-t2 = threading.Thread(target=multiplicarPorDos)
 
-t1.start()
+lock.acquire()
+
+t1 = threading.Thread(target=sumarUno, name="Sumar uno")
+t2 = threading.Thread(target=multiplicarPorDos, name="Multiplicar por dos")
+
 t2.start()
+t1.start()
+
+t2.join()
 
 logging.info(valor)
 
